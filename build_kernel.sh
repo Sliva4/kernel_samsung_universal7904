@@ -15,7 +15,7 @@ DTB_YN=$([[ "$DTB" == "dtb" ]] && echo " with DTB" || echo " without DTB")
 ROOT_DIR=$(pwd)
 
 git submodule update --init --recursive
-cd KernelSU-Next/
+cd KernelSU/
 COMMIT_TAG=$(git describe --tags)
 cd ..
 
