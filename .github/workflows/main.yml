@@ -83,15 +83,16 @@ jobs:
 
         cd AnyKernel3
         DEVICE="A30s"
-        KERNEL_VERSION="SlivaTest"
+        KERNEL_VERSION="v1"
         ZIP_NAME="${DEVICE}_${KERNEL_VERSION}"
+        echo $ZIP_NAME
         zip -r9 "../${ZIP_NAME}.zip" "${FILES[@]}"
         cd ..
 
     - name: Tag
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        TAG_NAME: "v${{ env.kernel_version }}"
+        TAG_NAME: "v1"
       run: |
         if git tag | grep -q "^${TAG_NAME}$"; then
           echo "Tag '${TAG_NAME}' already exists locally."
@@ -108,8 +109,8 @@ jobs:
     - name: Upload
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: "v${{ env.KERNEL_VERSION }}"
-        files: "${{ env.ZIP_NAME }}.zip"
+        tag_name: "v1"
+        files: "$A30s_v1.zip"
         body: "Built from commit ${{ github.sha }}"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
