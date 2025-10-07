@@ -108,7 +108,7 @@ jobs:
     - name: Upload
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: "v${{ env.kernel_version }}"
+        tag_name: "v${{ env.KERNEL_VERSION }}"
         files: "${{ env.ZIP_NAME }}.zip"
         body: "Built from commit ${{ github.sha }}"
       env:
