@@ -110,7 +110,7 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         tag_name: "v1"
-        files: "$A30s_v1.zip"
+        files: "A30s_v1.zip"
         body: "Built from commit ${{ github.sha }}"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
