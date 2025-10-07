@@ -1,0 +1,122 @@
+name: Kernel Builder Action
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install packages
+      run: |
+        sudo apt update
+        sudo DEBIAN_FRONTEND=noninteractive apt install -y \
+          build-essential bc zip curl git \
+          libncurses5-dev flex bison \
+          python-is-python3 ca-certificates unzip ccache
+
+    - name: Checkout repo
+      uses: actions/checkout@v3.5.3
+      with:
+        fetch-depth: 1
+        submodules: recursive
+
+    - name: Symlink libmpfr
+      run: |
+        LIB_PATH=$(ldconfig -p | grep libmpfr.so.6 | head -n1 | awk '{print $NF}')
+        if [ -f "$LIB_PATH" ]; then
+          sudo ln -sf "$LIB_PATH" /usr/lib/x86_64-linux-gnu/libmpfr.so.4
+          echo "Symlinked libmpfr.so.4 -> $LIB_PATH"
+        else
+          echo "libmpfr.so.6 not found, aborting."
+          exit 1
+        fi
+
+    - name: Make defconfig
+      run: |
+        echo "Building defconfig"
+        make ARCH=arm64 exynos7885-a30s_oneui_defconfig -j$(nproc)
+
+    - name: Make kernel
+      run: |
+        echo "Building kernel"
+        make ARCH=arm64 -j$(nproc)
+
+    - name: Build DTB
+      run: |
+        echo "Building DTB"
+        make ARCH=arm64 -j$(nproc) dtb.img
+        cp arch/arm64/boot/dtb.img AnyKernel3/dtb.img
+
+    - name: Zip kernel
+      shell: bash
+      run: |
+        if [ ! -f arch/arm64/boot/Image ]; then
+          echo "Build failed: Image not found"
+          exit 1
+        fi
+
+        cp arch/arm64/boot/Image AnyKernel3/Image
+
+        FILES=(
+          "Image"
+          "version"
+          "META-INF/com/google/android/update-binary"
+          "META-INF/com/google/android/updater-script"
+          "tools/ak3-core.sh"
+          "tools/busybox"
+          "tools/magiskboot"
+          "tools/tweaks.zip"
+          "anykernel.sh"
+        )
+
+        [ -f "AnyKernel3/dtb.img" ] && FILES+=("dtb.img")
+
+        git submodule update --init
+        cd KernelSU-Next
+        git fetch --tags
+        KSU_VER=$(git describe --tags --abbrev=0)
+        cd ..
+
+        cd AnyKernel3
+        DEVICE="A30s"
+        KERNEL_VERSION="$(grep UTS_RELEASE ${{ github.workspace }}/include/generated/utsrelease.h | cut -d'"' -f2 | sed 's/+*$//')-KSUN-${KSU_VER}_b$(cat ${{ github.workspace }}/.version)"
+        echo "kernel_version=${KERNEL_VERSION}" >> $GITHUB_ENV
+        ZIP_NAME="${DEVICE}_${KERNEL_VERSION}"
+        echo "ZIP_NAME=${ZIP_NAME}" >> $GITHUB_ENV
+        zip -r9 "../${ZIP_NAME}.zip" "${FILES[@]}"
+        cd ..
+
+    - name: Tag
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        TAG_NAME: "v${{ env.kernel_version }}"
+      run: |
+        if git tag | grep -q "^${TAG_NAME}$"; then
+          echo "Tag '${TAG_NAME}' already exists locally."
+        else
+          echo "Creating and pushing tag '${TAG_NAME}'"
+          git config user.name "github-actions"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "$TAG_NAME" -m "GitHub Actions automated release: $TAG_NAME"
+          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}
+          git push origin "$TAG_NAME"
+        fi
+        git checkout "$TAG_NAME"
+
+    - name: Upload
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: "v${{ env.kernel_version }}"
+        files: "${{ env.ZIP_NAME }}.zip"
+        body: "Built from commit ${{ github.sha }}"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      continue-on-error: false
