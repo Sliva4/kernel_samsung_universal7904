@@ -1,5 +1,5 @@
 #!/bin/bash
-
+export CFLAGS='-std=c99'
 set -euo pipefail
 [[ -n "${3:-}" ]] && set "-$3"
 trap "echo KeyboardInterrupt!; exit 1" INT
