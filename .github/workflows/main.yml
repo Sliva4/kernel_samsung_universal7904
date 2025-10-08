@@ -83,35 +83,13 @@ jobs:
 
         cd AnyKernel3
         DEVICE="A30s"
-        KERNEL_VERSION="v2"
-        ZIP_NAME="${DEVICE}_${KERNEL_VERSION}"
+        ZIP_NAME="${DEVICE}"
         echo $ZIP_NAME
         zip -r9 "../${ZIP_NAME}.zip" "${FILES[@]}"
         cd ..
 
-    - name: Tag
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        TAG_NAME: "v2"
-      run: |
-        if git tag | grep -q "^${TAG_NAME}$"; then
-          echo "Tag '${TAG_NAME}' already exists locally."
-        else
-          echo "Creating and pushing tag '${TAG_NAME}'"
-          git config user.name "github-actions"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag -a "$TAG_NAME" -m "GitHub Actions automated release: $TAG_NAME"
-          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}
-          git push origin "$TAG_NAME"
-        fi
-        git checkout "$TAG_NAME"
-
-    - name: Upload
-      uses: softprops/action-gh-release@v1
+    - name: Upload Build Artifact
+      uses: actions/upload-artifact@v4
       with:
-        tag_name: "v2"
-        files: "A30s_v2.zip"
-        body: "Built from commit ${{ github.sha }}"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      continue-on-error: false
+        name: Kernel
+        path: A30s.zip
