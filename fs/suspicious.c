@@ -1,3 +1,5 @@
+#ifndef _LINUX_SUS_DEF_SLIVA
+#define _LINUX_SUS_DEF_SLIVA
 #include <linux/string.h>
 #include <linux/types.h>
 #include <linux/cred.h>
@@ -204,3 +206,4 @@ int is_suspicious_mount(struct vfsmount* const mnt, const struct path* const roo
 	return status;
 
 }
+#endif
