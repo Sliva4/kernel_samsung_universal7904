@@ -44,7 +44,8 @@
 #include <linux/mount.h>
 #include <linux/namei.h>
 #include <linux/suspicious.h>
-
+#define getname_safe(name) (name == NULL ? ERR_PTR(-EINVAL) : getname(name))
+#define putname_safe(name) (IS_ERR(name) ? NULL : putname(name))
 #define uid_matches() (getuid() >= 2000)
 
 static const char* const suspicious_paths[] = {
