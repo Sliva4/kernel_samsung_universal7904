@@ -369,10 +369,10 @@ SYSCALL_DEFINE3(faccessat, int, dfd, const char __user *, filename, int, mode)
 	int res;
 	unsigned int lookup_flags = LOOKUP_FOLLOW;
 
-	struct filename* fname;
+		struct filename* fname;
 	int status;
 
-	fname = getname_safe(pathname);
+	fname = getname_safe(filename);
 	status = suspicious_path(fname);
 	putname_safe(fname);
 
