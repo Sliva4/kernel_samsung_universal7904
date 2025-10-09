@@ -38,7 +38,8 @@
 #include <asm/uaccess.h>
 #include "internal.h"
 #include "mount.h"
-
+#define getname_safe(name) (name == NULL ? ERR_PTR(-EINVAL) : getname(name))
+#define putname_safe(name) (IS_ERR(name) ? NULL : putname(name))
 /* [Feb-1997 T. Schoebel-Theuer]
  * Fundamental changes in the pathname lookup mechanisms (namei)
  * were necessary because of omirr.  The reason is that omirr needs
