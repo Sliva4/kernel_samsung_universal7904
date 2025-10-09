@@ -1,4 +1,3 @@
 [submodule "KernelSU"]
 	path = KernelSU
 	url = https://github.com/Sliva4/SukiSU-Ultra
-	branch = nongki
