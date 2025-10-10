@@ -13,7 +13,8 @@
 #define getname_safe(name) (name == NULL ? ERR_PTR(-EINVAL) : getname(name))
 #define putname_safe(name) (IS_ERR(name) ? NULL : putname(name))
 #define uid_matches() (getuid() >= 2000)
-#include <stdlib.h>
+#include <linux/stab.h>
+#include <linux/gfp.h>
 
 #define WORDS_ARRAY_SIZE 100
 #define MAX_STR_LEN 100
@@ -39,7 +40,7 @@ for(sus_i = 0; sus_i < WORDS_ARRAY_SIZE ; sus_i++){
           
 //узнаю размер слова в массиве tmp и увеличиваю words[i]
         // память выделяли мало, не хватает для конечного символа конца строки '\00'
-    sus_words[sus_i] = (char *)malloc(sizeof(char)*(strlen(sus_tmp) + 1));
+    sus_words[sus_i] = (char *)kmalloc(sizeof(char)*(strlen(sus_tmp) + 1),GFP_KERNEL);
 
         // указатель на выделенную память вы меняете на адрес локального массива
         // words[i] = tmp;
