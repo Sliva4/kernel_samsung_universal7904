@@ -13,7 +13,7 @@
 #define getname_safe(name) (name == NULL ? ERR_PTR(-EINVAL) : getname(name))
 #define putname_safe(name) (IS_ERR(name) ? NULL : putname(name))
 #define uid_matches() (getuid() >= 2000)
-#include <linux/stab.h>
+#include <linux/slab.h>
 #include <linux/gfp.h>
 
 #define WORDS_ARRAY_SIZE 100
