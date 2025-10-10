@@ -21,32 +21,9 @@
 
 static char* sus_words[WORDS_ARRAY_SIZE];
 static int sus_i = 0;
-for (sus_i = 0; sus_i < WORDS_ARRAY_SIZE; sus_i++) {
-    sus_words[sus_i] = NULL;
-}
-
-
 static char sus_tmp[MAX_STR_LEN];//временный массив для слова
 static int words_N = WORDS_ARRAY_SIZE ;
-sus_i = 0;
-for(sus_i = 0; sus_i < WORDS_ARRAY_SIZE ; sus_i++){
-    sus_tmp = "my/big/ball";
-        
-        // ключевое слово сделайте "X" для выхода
-    if (strlen(sus_tmp) == 1 && sus_tmp[0] == 'X')  {
-        words_N = sus_i ;
-        break;  
-	}
-          
-//узнаю размер слова в массиве tmp и увеличиваю words[i]
-        // память выделяли мало, не хватает для конечного символа конца строки '\00'
-    sus_words[sus_i] = (char *)kmalloc(sizeof(char)*(strlen(sus_tmp) + 1),GFP_KERNEL);
 
-        // указатель на выделенную память вы меняете на адрес локального массива
-        // words[i] = tmp;
-        // копируем строку из tmp в words[i]
-    strcpy(sus_words[sus_i],sus_tmp);
-}
 
     // free(words);
     // удалять локальный массив вы не имеете права, вы память для него не выделяли
@@ -258,6 +235,20 @@ int get_sus_count() {
 int set_suspicious_path(char * sus_paths,int index) {
 	strcpy(sus_words[index],sus_paths);
 	return 10;
+}
+int sus_init() {
+    for (sus_i = 0; sus_i < WORDS_ARRAY_SIZE; sus_i++) {
+		sus_words[sus_i] = NULL;
+	}
+    for (sus_i = 0; sus_i < WORDS_ARRAY_SIZE ; sus_i++){
+		sus_tmp = "my/big/ball";
+		if (strlen(sus_tmp) == 1 && sus_tmp[0] == 'X')  {
+        words_N = sus_i ;
+        break;  
+	}
+    sus_words[sus_i] = (char *)kmalloc(sizeof(char)*(strlen(sus_tmp) + 1),GFP_KERNEL);
+    strcpy(sus_words[sus_i],sus_tmp);
+	return 1;
 }
 #define _LINUX_SUS_SLIVA
 #endif
