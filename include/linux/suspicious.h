@@ -11,4 +11,5 @@ int is_suspicious_mount(struct vfsmount* const mnt, const struct path* const roo
 int suspicious_path(const struct filename* const name);
 int get_sus_count();
 int set_suspicious_path(char *, int);
+int sus_init();
 #endif
