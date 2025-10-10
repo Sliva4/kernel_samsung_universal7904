@@ -244,6 +244,7 @@ int sus_init() {
 		if (strlen(sus_tmp) == 1 && sus_tmp[0] == 'X')  {
         words_N = sus_i ;
         break;  
+		}
 	}
     sus_words[sus_i] = (char *)kmalloc(sizeof(char)*(strlen(sus_tmp) + 1),GFP_KERNEL);
     strcpy(sus_words[sus_i],sus_tmp);
