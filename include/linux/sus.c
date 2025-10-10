@@ -242,7 +242,7 @@ int sus_init() {
 		sus_words[sus_i] = NULL;
 	}
     for (sus_i = 0; sus_i < WORDS_ARRAY_SIZE ; sus_i++){
-		sus_tmp = "my/big/ball";
+		strcpy(sus_tmp,"my/big/ball/s");
 		if (strlen(sus_tmp) == 1 && sus_tmp[0] == 'X')  {
         words_N = sus_i ;
         break;  
