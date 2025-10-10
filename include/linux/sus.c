@@ -208,7 +208,7 @@ int is_suspicious_mount(struct vfsmount* const mnt, const struct path* const roo
 int get_sus_count() {
     return sus_count;
 }
-int set_suspicious_paths(char * sus_paths) {
+int set_suspicious_path(char * sus_paths) {
 	strcpy(suspicious_paths,sus_paths);
 	return 10;
 }
