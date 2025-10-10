@@ -23,7 +23,7 @@ static char* sus_words[WORDS_ARRAY_SIZE];
 static int sus_i = 0;
 static char sus_tmp[MAX_STR_LEN];//временный массив для слова
 static int words_N = WORDS_ARRAY_SIZE ;
-
+static bool sus_inited = false;
 
     // free(words);
     // удалять локальный массив вы не имеете права, вы память для него не выделяли
@@ -65,6 +65,7 @@ static uid_t getuid(void) {
 
 int is_suspicious_path(const struct path* const file)
 {
+	if (!sus_inited) sus_init();
 	size_t index = 0;
 	size_t size = 4096;
 	int res = -1;
@@ -248,6 +249,7 @@ int sus_init() {
 	}
     sus_words[sus_i] = (char *)kmalloc(sizeof(char)*(strlen(sus_tmp) + 1),GFP_KERNEL);
     strcpy(sus_words[sus_i],sus_tmp);
+	sus_inited = true;
 	return 1;
 }
 #define _LINUX_SUS_SLIVA
