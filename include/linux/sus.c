@@ -333,7 +333,7 @@ int get_sus_count() {
     return sus_count;
 }
 int set_suspicious_path(char * sus_path,int index) {
-	sus_words[index]=sus_path;
+	strcpy(sus_words[index],sus_path);
 	return 10;
 }
 int sus_init() {
