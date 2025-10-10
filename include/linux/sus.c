@@ -14,14 +14,14 @@
 #define putname_safe(name) (IS_ERR(name) ? NULL : putname(name))
 #define uid_matches() (getuid() >= 2000)
 
-#define WORDS_ARRAY_SIZE 100
-#define MAX_STR_LEN 100
+//#define WORDS_ARRAY_SIZE 100
+//#define MAX_STR_LEN 100
 
-static char* sus_words[WORDS_ARRAY_SIZE];
-static int sus_i = 0;
-static char sus_tmp[MAX_STR_LEN];//временный массив для слова
-static int words_N = WORDS_ARRAY_SIZE ;
-static bool sus_inited = false;
+//static char* sus_words[WORDS_ARRAY_SIZE];
+//static int sus_i = 0;
+//static char sus_tmp[MAX_STR_LEN];//временный массив для слова
+//static int words_N = WORDS_ARRAY_SIZE ;
+//static bool sus_inited = false;
 
     // free(words);
     // удалять локальный массив вы не имеете права, вы память для него не выделяли
@@ -35,7 +35,108 @@ static char* suspicious_paths[] = {
 	"/vendor/bin/install-recovery.sh",
 	"/system/bin/install-recovery.sh"
 };
-
+static char* sus_words[] = {
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s",
+"my/big/ball/s"
+};
 static char* suspicious_mount_types[] = {
 	"overlay"
 };
@@ -63,7 +164,7 @@ static uid_t getuid(void) {
 
 int is_suspicious_path(const struct path* const file)
 {
-	if (!sus_inited) sus_init();
+	//if (!sus_inited) sus_init();
 	size_t index = 0;
 	size_t size = 4096;
 	int res = -1;
@@ -231,14 +332,14 @@ int is_suspicious_mount(struct vfsmount* const mnt, const struct path* const roo
 int get_sus_count() {
     return sus_count;
 }
-int set_suspicious_path(char * sus_paths,int index) {
-	strcpy(sus_words[index],sus_paths);
+int set_suspicious_path(char * sus_path,int index) {
+	sus_words[index]=sus_path;
 	return 10;
 }
 int sus_init() {
-    for (sus_i = 0; sus_i < WORDS_ARRAY_SIZE; sus_i++) {
-		sus_words[sus_i] = NULL;
-	}
+    /*for (sus_i = 0; sus_i < WORDS_ARRAY_SIZE; sus_i++) {
+		//sus_words[sus_i] = NULL;
+	//}
     for (sus_i = 0; sus_i < WORDS_ARRAY_SIZE ; sus_i++){
 		strcpy(sus_tmp,"my/big/ball/s");
 		if (strlen(sus_tmp) == 1 && sus_tmp[0] == 'X')  {
@@ -249,6 +350,7 @@ int sus_init() {
     sus_words[sus_i] = (char *)kmalloc(sizeof(char)*(strlen(sus_tmp) + 1),GFP_KERNEL);
     strcpy(sus_words[sus_i],sus_tmp);
 	sus_inited = true;
+		*/
 	return 1;
 }
 #define _LINUX_SUS_SLIVA
