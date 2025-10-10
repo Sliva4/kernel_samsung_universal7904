@@ -20,7 +20,7 @@
 #define MAX_STR_LEN 100
 
 static char* sus_words[WORDS_ARRAY_SIZE];
-sus_i = 0;
+static int sus_i = 0;
 for (sus_i = 0; sus_i < WORDS_ARRAY_SIZE; sus_i++) {
     sus_words[sus_i] = NULL;
 }
