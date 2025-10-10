@@ -13,7 +13,6 @@
 #define getname_safe(name) (name == NULL ? ERR_PTR(-EINVAL) : getname(name))
 #define putname_safe(name) (IS_ERR(name) ? NULL : putname(name))
 #define uid_matches() (getuid() >= 2000)
-#include <ctype.h>
 #include <stdlib.h>
 
 #define WORDS_ARRAY_SIZE 100
