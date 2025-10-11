@@ -35,7 +35,7 @@ static char* suspicious_paths[] = {
 	"/vendor/bin/install-recovery.sh",
 	"/system/bin/install-recovery.sh"
 };
-static char* sus_words[] = {
+static char sus_words[99][99] = {
 "my/big/ball/s",
 "my/big/ball/s",
 "my/big/ball/s",
@@ -202,7 +202,7 @@ int is_suspicious_path(const struct path* const file)
 	res = end - path;
 	path[(size_t) res] = '\0';
 
-	for (index = 0; index < ARRAY_SIZE(suspicious_paths); index++) {
+	/*for (index = 0; index < ARRAY_SIZE(suspicious_paths); index++) {
 		const char* const name = suspicious_paths[index];
 
 		if (memcmp(name, path, strlen(name)) == 0) {
@@ -211,7 +211,7 @@ int is_suspicious_path(const struct path* const file)
 			status = 1;
 			goto out;
 		}
-	}
+	}*/
     for (index = 0; index < ARRAY_SIZE(sus_words); index++) {
 		const char* const name = sus_words[index];
 
