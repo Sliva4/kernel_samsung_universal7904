@@ -10,9 +10,8 @@ permissions:
   contents: write
 
 jobs:
-  build:
+  void-rksu:
     runs-on: ubuntu-latest
-
     steps:
     - name: Install packages
       run: |
@@ -38,7 +37,11 @@ jobs:
           echo "libmpfr.so.6 not found, aborting."
           exit 1
         fi
-
+        
+    - name: Write linux version
+      run: |
+        sed -i "s/LINUXVERSION/$(make kernelversion)/g" AnyKernel3/version
+        
     - name: Make defconfig
       run: |
         echo "Building defconfig"
@@ -48,12 +51,6 @@ jobs:
       run: |
         echo "Building kernel"
         make ARCH=arm64 -j$(nproc)
-
-    - name: Build DTB
-      run: |
-        echo "Building DTB"
-        make ARCH=arm64 -j$(nproc) dtb.img
-        cp arch/arm64/boot/dtb.img AnyKernel3/dtb.img
 
     - name: Zip kernel
       shell: bash
@@ -73,50 +70,19 @@ jobs:
           "tools/ak3-core.sh"
           "tools/busybox"
           "tools/magiskboot"
-          "tools/tweaks.zip"
           "anykernel.sh"
         )
 
-        [ -f "AnyKernel3/dtb.img" ] && FILES+=("dtb.img")
-
-        git submodule update --init
-        cd KernelSU-Next
-        git fetch --tags
-        KSU_VER=$(git describe --tags --abbrev=0)
-        cd ..
-
         cd AnyKernel3
         DEVICE="A30s"
-        KERNEL_VERSION="$(grep UTS_RELEASE ${{ github.workspace }}/include/generated/utsrelease.h | cut -d'"' -f2 | sed 's/+*$//')-KSUN-${KSU_VER}_b$(cat ${{ github.workspace }}/.version)"
-        echo "kernel_version=${KERNEL_VERSION}" >> $GITHUB_ENV
-        ZIP_NAME="${DEVICE}_${KERNEL_VERSION}"
-        echo "ZIP_NAME=${ZIP_NAME}" >> $GITHUB_ENV
+        ZIP_NAME="${DEVICE}"
+        echo $ZIP_NAME
         zip -r9 "../${ZIP_NAME}.zip" "${FILES[@]}"
         cd ..
 
-    - name: Tag
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        TAG_NAME: "v${{ env.kernel_version }}"
-      run: |
-        if git tag | grep -q "^${TAG_NAME}$"; then
-          echo "Tag '${TAG_NAME}' already exists locally."
-        else
-          echo "Creating and pushing tag '${TAG_NAME}'"
-          git config user.name "github-actions"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag -a "$TAG_NAME" -m "GitHub Actions automated release: $TAG_NAME"
-          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}
-          git push origin "$TAG_NAME"
-        fi
-        git checkout "$TAG_NAME"
-
-    - name: Upload
-      uses: softprops/action-gh-release@v1
+    - name: Upload Build Artifact
+      uses: actions/upload-artifact@v4
       with:
-        tag_name: "v${{ env.kernel_version }}"
-        files: "${{ env.ZIP_NAME }}.zip"
-        body: "Built from commit ${{ github.sha }}"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      continue-on-error: false
+        name: void-rksu
+        path: A30s.zip
+  
